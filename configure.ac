@@ -12,7 +12,7 @@ CPPFLAGS_R=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 CXXFLAGS_R=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
 
 # NOTE: This has to be conditional.
-CXXSTD=`"${R_HOME}/bin/R" CMD config CXX23STD`
+CXXSTD=`"${R_HOME}/bin/R" CMD config CXX17STD`
 
 # This doesnt work at the moment.
 LIBS_R=`"${R_HOME}/bin/R" CMD config LIBS`
@@ -25,9 +25,9 @@ AC_LANG([C++])
 AC_PROG_CXX
 m4_include([m4/ax_cxx_compile_stdcxx.m4])
 
-AX_CXX_COMPILE_STDCXX(23, ext, optional)
-if test "$HAVE_CXX23" = "1"; then
-  AC_MSG_NOTICE([C++23 support detected])
+AX_CXX_COMPILE_STDCXX(20, ext, optional)
+if test "$HAVE_CXX20" = "1"; then
+  AC_MSG_NOTICE([C++20 support detected])
 else
   AC_MSG_NOTICE([C++20 support NOT available])
 fi
