@@ -1,2 +1,2 @@
-PKG_CPPFLAGS = -I. 
-PKG_LIBS =   
+PKG_CPPFLAGS = 
+PKG_CXXFLAGS = -std=gnu++23 -O3 -mtune=native -march=native

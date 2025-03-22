@@ -4,29 +4,34 @@ AC_MSG_NOTICE([Initialized autoconf])
 # Find the compiler and compiler flags used by R.
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
-  echo "could not determine R_HOME"
-  exit 1
+  AC_MSG_ERROR([could not determine R_HOME])
 fi
-CXX=`"${R_HOME}/bin/R" CMD config CXX`
-CXXFLAGS=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
-CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
-AC_LANG(C++)
-AC_PROG_CPP
 
+# All relevant flags and stuff
+CPPFLAGS_R=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
+CXXFLAGS_R=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
+
+# NOTE: This has to be conditional.
+CXXSTD=`"${R_HOME}/bin/R" CMD config CXX23STD`
+
+# This doesnt work at the moment.
+LIBS_R=`"${R_HOME}/bin/R" CMD config LIBS`
+BLAS_LIBS=`"${R_HOME}/bin/R" CMD config BLAS_LIBS`
+LAPACK_LIBS=`"${R_HOME}/bin/R" CMD config LAPACK_LIBS`
+FLIBS=`"${R_HOME}/bin/R" CMD config FLIBS`
+
+# Check for c++20 compatibility
+AC_LANG([C++])
+AC_PROG_CXX
 m4_include([m4/ax_cxx_compile_stdcxx.m4])
 AX_CXX_COMPILE_STDCXX(20)
 
-# Write the flags into the src/Makevars file.
-AC_SUBST([PKG_CPPFLAGS], ["${PKG_CPPFLAGS}"])
-AC_SUBST([PKG_LIBS], ["${LIBS} ${PKG_LIBS} ${ac_cv_search_deflate}"])
+AC_SEARCH_LIBS(deflate, z, [], [AC_MSG_ERROR([zlib required])])
+
+PKG_CPPFLAGS="${CPPFLAGS_R}"
+PKG_CXXFLAGS="${CXXSTD} ${CXXFLAGS_R}"
+
+AC_SUBST([PKG_CPPFLAGS])
+AC_SUBST([PKG_CXXFLAGS])
 AC_CONFIG_FILES([src/Makevars])
 AC_OUTPUT
-
-echo "
-  --------------------------------------------------
-  Configuration for ${PACKAGE_NAME} ${PACKAGE_VERSION}
-
-    cppflags: ${CPPFLAGS} ${PKG_CPPFLAGS}
-
-  --------------------------------------------------
-"
