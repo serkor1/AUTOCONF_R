@@ -1,0 +1,53 @@
+AC_INIT(autoconf_r,1.0.0)
+AC_MSG_NOTICE([Initialized autoconf])
+
+# Find the compiler and compiler flags used by R.
+: ${R_HOME=`R RHOME`}
+if test -z "${R_HOME}"; then
+  AC_MSG_ERROR([could not determine R_HOME])
+fi
+
+# All relevant flags and stuff
+CPPFLAGS_R=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
+CXXFLAGS_R=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
+
+# NOTE: This has to be conditional.
+CXXSTD=`"${R_HOME}/bin/R" CMD config CXX17STD`
+
+# This doesnt work at the moment.
+LIBS_R=`"${R_HOME}/bin/R" CMD config LIBS`
+BLAS_LIBS=`"${R_HOME}/bin/R" CMD config BLAS_LIBS`
+LAPACK_LIBS=`"${R_HOME}/bin/R" CMD config LAPACK_LIBS`
+FLIBS=`"${R_HOME}/bin/R" CMD config FLIBS`
+
+# Check for c++20 compatibility
+AC_LANG([C++])
+AC_PROG_CXX
+m4_include([m4/ax_cxx_compile_stdcxx.m4])
+
+AX_CXX_COMPILE_STDCXX(20, ext, optional)
+if test "$HAVE_CXX20" = "1"; then
+  AC_MSG_NOTICE([C++20 support detected])
+else
+  AC_MSG_NOTICE([C++20 support NOT available])
+fi
+
+AC_SEARCH_LIBS(deflate, z, [], [AC_MSG_ERROR([zlib required])])
+
+
+m4_include([m4/ax_openmp.m4])
+AX_OPENMP(
+  [AC_MSG_NOTICE([OpenMP available])],
+  [AC_MSG_NOTICE([OpenMP NOT available])]
+)
+
+PKG_CPPFLAGS="${CPPFLAGS_R}"
+PKG_CXXFLAGS="${CXXSTD} ${CXXFLAGS_R} $OPENMP_CFLAGS"
+PKG_LIBS="${BLAS_LIBS} ${LAPACK_LIBS} ${FLIBS}"
+
+
+AC_SUBST([PKG_CPPFLAGS])
+AC_SUBST([PKG_LIBS])
+AC_SUBST([PKG_CXXFLAGS])
+AC_CONFIG_FILES([src/Makevars])
+AC_OUTPUT
