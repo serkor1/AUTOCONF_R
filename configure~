@@ -614,7 +614,6 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-PKG_LIBS
 PKG_CXXFLAGS
 PKG_CPPFLAGS
 HAVE_CXX20
@@ -2055,15 +2054,20 @@ if test -z "${R_HOME}"; then
   as_fn_error $? "could not determine R_HOME" "$LINENO" 5
 fi
 
-# Get R’s compile/link flags (use LIBS, not PKG_LIBS)
+# All relevant flags and stuff
 CPPFLAGS_R=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 CXXFLAGS_R=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
+
+# NOTE: This has to be conditional.
 CXXSTD=`"${R_HOME}/bin/R" CMD config CXX23STD`
+
+# This doesnt work at the moment.
 LIBS_R=`"${R_HOME}/bin/R" CMD config LIBS`
 BLAS_LIBS=`"${R_HOME}/bin/R" CMD config BLAS_LIBS`
 LAPACK_LIBS=`"${R_HOME}/bin/R" CMD config LAPACK_LIBS`
 FLIBS=`"${R_HOME}/bin/R" CMD config FLIBS`
 
+# Check for c++20 compatibility
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2747,6 +2751,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 #   warranty.
 
 #serial 25
+
 
 
 
@@ -5404,6 +5409,14 @@ printf "%s\n" "#define HAVE_CXX20 1" >>confdefs.h
   fi
 
 
+if test "$HAVE_CXX20" = "1"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: C++23 support detected" >&5
+printf "%s\n" "$as_me: C++23 support detected" >&6;}
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: C++20 support NOT available" >&5
+printf "%s\n" "$as_me: C++20 support NOT available" >&6;}
+fi
+
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing deflate" >&5
 printf %s "checking for library containing deflate... " >&6; }
@@ -5468,8 +5481,6 @@ fi
 
 PKG_CPPFLAGS="${CPPFLAGS_R}"
 PKG_CXXFLAGS="${CXXSTD} ${CXXFLAGS_R}"
-PKG_LIBS="${LIBS_R} ${BLAS_LIBS} ${LAPACK_LIBS} ${FLIBS} ${ac_cv_search_deflate}"
-
 
 
 

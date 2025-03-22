@@ -24,7 +24,13 @@ FLIBS=`"${R_HOME}/bin/R" CMD config FLIBS`
 AC_LANG([C++])
 AC_PROG_CXX
 m4_include([m4/ax_cxx_compile_stdcxx.m4])
-AX_CXX_COMPILE_STDCXX(20)
+
+AX_CXX_COMPILE_STDCXX(23, ext, optional)
+if test "$HAVE_CXX23" = "1"; then
+  AC_MSG_NOTICE([C++23 support detected])
+else
+  AC_MSG_NOTICE([C++20 support NOT available])
+fi
 
 AC_SEARCH_LIBS(deflate, z, [], [AC_MSG_ERROR([zlib required])])
 
