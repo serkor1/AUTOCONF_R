@@ -5,3 +5,7 @@ iota <- function(x = 10L) {
     .Call(`_autoconf_iota`, x)
 }
 
+checkOpenMP <- function() {
+    .Call(`_autoconf_checkOpenMP`)
+}
+

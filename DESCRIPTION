@@ -8,3 +8,4 @@ Description: More about what it does (maybe more than one line).
 License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.14)
 LinkingTo: Rcpp
+RoxygenNote: 7.3.2

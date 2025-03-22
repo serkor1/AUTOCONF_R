@@ -21,9 +21,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// checkOpenMP
+Rcpp::List checkOpenMP();
+RcppExport SEXP _autoconf_checkOpenMP() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(checkOpenMP());
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_autoconf_iota", (DL_FUNC) &_autoconf_iota, 1},
+    {"_autoconf_checkOpenMP", (DL_FUNC) &_autoconf_checkOpenMP, 0},
     {NULL, NULL, 0}
 };
 
